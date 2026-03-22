@@ -1,0 +1,17 @@
+{
+  "name": "aether-key-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "apps/*",
+    "examples/*"
+  ],
+  "scripts": {
+    "build": "npm run build --workspace=@aether-key/react",
+    "dev": "npm run dev --workspace=@aether-key/react",
+    "dev:example": "npm run dev --workspace=basic-chat",
+    "proxy": "cd apps/proxy && uvicorn app.main:app --reload --port 8000",
+    "proxy:docker": "cd apps/proxy && docker compose up --build"
+  }
+}

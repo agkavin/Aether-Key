@@ -1,0 +1,33 @@
+{
+    "compilerOptions": {
+        "target": "es2020",
+        "module": "esnext",
+        "lib": [
+            "es2020",
+            "dom",
+            "dom.iterable"
+        ],
+        "declaration": true,
+        "declarationMap": true,
+        "sourceMap": true,
+        "jsx": "react-jsx",
+        "strict": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true,
+        "moduleResolution": "node",
+        "baseUrl": ".",
+        "paths": {
+            "@/*": [
+                "src/*"
+            ]
+        }
+    },
+    "include": [
+        "src/**/*"
+    ],
+    "exclude": [
+        "node_modules",
+        "dist"
+    ]
+}
