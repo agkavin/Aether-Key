@@ -158,6 +158,15 @@ Security is not a feature of Aether-Key—it is the core design constraint.
 | **LLM Router** | LiteLLM |
 | **Distribution** | NPM (UI), Docker (Proxy) |
 
+---
+
+## Featured Projects
+
+### [Aether-Ollama](ollama-chat/)
+A standalone, high-performance streaming chat interface designed specifically for local Ollama models. Deployed at [ollama-chat.agkavin.dev](https://ollama-chat.agkavin.dev).
+
+---
+
 ## License
 
 MIT
