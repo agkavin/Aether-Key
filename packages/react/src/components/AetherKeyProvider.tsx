@@ -33,8 +33,11 @@ interface AetherKeyProviderProps {
 }
 
 export function AetherKeyProvider({ proxyUrl, ollamaUrl, queryClient, children }: AetherKeyProviderProps) {
+    const isWin = typeof window !== 'undefined' && window.navigator?.userAgent?.includes('Windows');
+    const DEFAULT_OLLAMA_URL = isWin ? 'http://127.0.0.1:11434' : 'http://localhost:11434';
+
     return (
-        <AetherKeyContext.Provider value={{ proxyUrl, ollamaUrl: ollamaUrl ?? 'http://127.0.0.1:11434' }}>
+        <AetherKeyContext.Provider value={{ proxyUrl, ollamaUrl: ollamaUrl ?? DEFAULT_OLLAMA_URL }}>
             <QueryClientProvider client={queryClient ?? defaultQueryClient}>
                 {children}
             </QueryClientProvider>

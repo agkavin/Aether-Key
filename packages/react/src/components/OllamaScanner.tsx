@@ -3,7 +3,9 @@ import { useVaultStore } from '../store/vaultStore';
 import { useAetherKeyContext } from './AetherKeyProvider';
 
 export function useOllamaScanner(ollamaUrl?: string) {
-    const url = ollamaUrl ?? 'http://127.0.0.1:11434';
+    const isWin = typeof window !== 'undefined' && window.navigator?.userAgent?.includes('Windows');
+    const DEFAULT_OLLAMA_URL = isWin ? 'http://127.0.0.1:11434' : 'http://localhost:11434';
+    const url = ollamaUrl ?? DEFAULT_OLLAMA_URL;
     const [isScanning, setIsScanning] = useState(false);
     const [models, setModels] = useState<any[]>([]);
     const [error, setError] = useState<string | null>(null);
