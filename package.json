@@ -11,7 +11,8 @@
     "build": "npm run build --workspace=@aether-key/react",
     "dev": "npm run dev --workspace=@aether-key/react",
     "dev:example": "npm run dev --workspace=basic-chat",
-    "proxy": "cd apps/proxy && uvicorn app.main:app --reload --port 8000",
-    "proxy:docker": "cd apps/proxy && docker compose up --build"
+    "dev:aether-ollama": "npm run dev --workspace=aether-ollama",
+    "proxy": "cd apps/python-proxy && uvicorn app.main:app --reload --port 8000",
+    "proxy:docker": "cd apps/python-proxy && docker compose up --build"
   }
 }

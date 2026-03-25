@@ -123,7 +123,7 @@ The proxy is required for cloud providers. It requires no database and no persis
 ```bash
 # Clone the repository
 git clone https://github.com/your-username/aether-key.git
-cd aether-key/apps/proxy
+cd aether-key/apps/python-proxy
 
 # Run via Docker (Recommended)
 docker compose up --build
@@ -162,7 +162,7 @@ Security is not a feature of Aether-Key—it is the core design constraint.
 
 ## Featured Projects
 
-### [Aether-Ollama](ollama-chat/)
+### [Aether-Ollama](examples/aether-ollama/)
 A standalone, high-performance streaming chat interface designed specifically for local Ollama models. Deployed at [ollama-chat.agkavin.dev](https://ollama-chat.agkavin.dev).
 
 ---
