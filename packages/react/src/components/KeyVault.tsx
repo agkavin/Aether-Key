@@ -6,7 +6,7 @@ import { StorageTier } from '../types';
 
 export function KeyVault() {
     const { proxyUrl } = useAetherKeyContext();
-    const { providerId, credentials, setCredential, storageTier, setStorageTier, setIsConfigured, saveVault } = useVaultStore();
+    const { providerId, credentials, setCredential, storageTier, setStorageTier, setIsConfigured, saveVault, modelId } = useVaultStore();
     const { data: fields, isLoading } = useProviderFields(proxyUrl, providerId);
     const [passphrase, setPassphrase] = useState('');
     const [showKey, setShowKey] = useState<Record<string, boolean>>({});
@@ -56,12 +56,13 @@ export function KeyVault() {
     };
 
     const allFieldsFilled = requiredFields.every(f => credentials[f]?.trim());
+    const canConnect = allFieldsFilled && modelId;
 
     return (
         <div className="rounded-2xl border-2 border-border overflow-hidden animate-slide-up mt-6">
             <div className="p-6 space-y-6">
                 {/* Credential fields */}
-                <div className="space-y-2">
+                <div className="space-y-4">
                     {requiredFields.map(field => (
                         <div key={field}>
                             <label className="block text-xs font-semibold mb-2 text-muted-foreground uppercase tracking-wider">
@@ -93,20 +94,17 @@ export function KeyVault() {
 
                 {/* Storage tier — compact row */}
                 <div className="flex gap-2">
-                    {([
-                        { id: 'session' as StorageTier, label: 'Session' },
-                        { id: 'local' as StorageTier, label: 'Remember' },
-                        { id: 'passphrase' as StorageTier, label: 'Encrypted' },
-                    ]).map(tier => (
+                    {(['session', 'local', 'passphrase'] as StorageTier[]).map(tier => (
                         <button
-                            key={tier.id}
-                            onClick={() => setStorageTier(tier.id)}
-                            className={`flex-1 py-3 rounded-xl text-sm font-medium border-2 transition-all ${storageTier === tier.id
-                                    ? 'border-primary bg-primary/10 text-primary shadow-sm'
-                                    : 'border-transparent bg-muted/50 text-muted-foreground hover:bg-muted hover:border-border/50'
+                            key={tier}
+                            type="button"
+                            onClick={() => setStorageTier(tier)}
+                            className={`flex-1 py-3 rounded-xl text-sm font-medium border-2 transition-all ${storageTier === tier
+                                ? 'border-primary bg-primary/10 text-primary shadow-sm'
+                                : 'border-transparent bg-muted/50 text-muted-foreground hover:bg-muted hover:border-border/50'
                                 }`}
                         >
-                            {tier.label}
+                            {tier.charAt(0).toUpperCase() + tier.slice(1)}
                         </button>
                     ))}
                 </div>
@@ -127,6 +125,14 @@ export function KeyVault() {
                     </div>
                 )}
 
+                {/* Warning if no model */}
+                {!modelId && (
+                    <div className="p-3 text-xs bg-amber-500/10 border border-amber-500/20 rounded-xl text-amber-500 flex items-center gap-2 animate-in slide-in-from-top-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" /><path d="M12 9v4" /><path d="M12 17h.01" /></svg>
+                        Select a model above before connecting
+                    </div>
+                )}
+
                 {/* Error */}
                 {validationError && (
                     <div className="p-4 text-sm bg-destructive/5 border border-destructive/20 rounded-xl text-destructive animate-slide-up font-medium">
@@ -137,7 +143,7 @@ export function KeyVault() {
                 {/* Connect button */}
                 <button
                     onClick={handleTestConnection}
-                    disabled={isValidating || !allFieldsFilled}
+                    disabled={isValidating || !canConnect}
                     className="w-full py-4 mt-2 rounded-xl text-base font-semibold bg-primary text-primary-foreground hover:bg-primary/90 transition-all shadow-md active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                     {isValidating ? (

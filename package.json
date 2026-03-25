@@ -12,7 +12,7 @@
     "dev": "npm run dev --workspace=@aether-key/react",
     "dev:example": "npm run dev --workspace=basic-chat",
     "dev:aether-ollama": "npm run dev --workspace=aether-ollama",
-    "proxy": "cd apps/python-proxy && uvicorn app.main:app --reload --port 8000",
+    "proxy": "cd apps/python-proxy && ./venv/bin/uvicorn app.main:app --reload --port 8000",
     "proxy:docker": "cd apps/python-proxy && docker compose up --build"
   }
 }

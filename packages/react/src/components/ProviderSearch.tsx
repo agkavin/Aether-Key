@@ -87,13 +87,18 @@ export function ProviderSearch({ proxyBaseUrl }: ProviderSearchProps) {
                                         key={p.id}
                                         onClick={() => {
                                             setProvider(p.id);
-                                            setModel('');
+                                            // Auto-select the first model if available
+                                            if (p.models && p.models.length > 0) {
+                                                setModel(p.models[0].id);
+                                            } else {
+                                                setModel('');
+                                            }
                                             setProviderOpen(false);
                                             setProviderSearch('');
                                         }}
                                         className={`w-full text-left px-3 py-3 rounded-lg text-sm transition-colors ${providerId === p.id
-                                                ? 'bg-primary text-primary-foreground font-medium shadow-sm'
-                                                : 'hover:bg-muted text-foreground'
+                                            ? 'bg-primary text-primary-foreground font-medium shadow-sm'
+                                            : 'hover:bg-muted text-foreground'
                                             }`}
                                     >
                                         <div className="flex items-center justify-between">
@@ -151,8 +156,8 @@ export function ProviderSearch({ proxyBaseUrl }: ProviderSearchProps) {
                                                 setModelSearch('');
                                             }}
                                             className={`w-full text-left px-3 py-3 rounded-lg text-sm transition-colors ${modelId === m.id
-                                                    ? 'bg-primary text-primary-foreground font-medium shadow-sm'
-                                                    : 'hover:bg-muted text-foreground'
+                                                ? 'bg-primary text-primary-foreground font-medium shadow-sm'
+                                                : 'hover:bg-muted text-foreground'
                                                 }`}
                                         >
                                             {m.name}

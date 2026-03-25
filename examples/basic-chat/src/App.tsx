@@ -1,9 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { AetherKeyModal, useBYOK, ConnectionStatus, useAetherKeyContext } from '@aether-key/react';
-import '@aether-key/react/dist/index.css';
+import { Send, Cpu, Sparkles, Trash2, MessageSquare, ShieldCheck, Zap } from 'lucide-react';
 
-function Chat() {
+function App() {
     const { proxyUrl, ollamaUrl } = useAetherKeyContext();
     const { headers, isConfigured, provider, model, isInitializing } = useBYOK();
     const [isOpen, setIsOpen] = useState(false);
@@ -15,17 +16,6 @@ function Chat() {
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages, isTyping]);
-
-    if (isInitializing) {
-        return (
-            <div className="min-h-screen flex items-center justify-center">
-                <div className="text-muted-foreground text-sm flex items-center gap-2">
-                    <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 12a9 9 0 1 1-6.219-8.56" /></svg>
-                    Loading...
-                </div>
-            </div>
-        );
-    }
 
     const handleSend = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -41,7 +31,7 @@ function Chat() {
             const targetUrl = isOllama ? `${ollamaUrl}/api/chat` : `${proxyUrl}/v1/chat/completions`;
 
             if (!model) {
-                setMessages([...newMessages, { role: 'assistant', content: 'No model selected. Connect your AI first.' }]);
+                setMessages([...newMessages, { role: 'assistant', content: '⚠️ No model selected. Connect your AI first.' }]);
                 setIsTyping(false);
                 return;
             }
@@ -54,141 +44,179 @@ function Chat() {
                 body: JSON.stringify(reqBody),
             });
 
-            if (!res.ok) throw new Error('Request failed');
+            if (!res.ok) {
+                const data = await res.json().catch(() => ({}));
+                throw new Error(data?.error?.message || data?.detail || 'Inference failed. Check your keys.');
+            }
+
             const data = await res.json();
             const reply = isOllama ? data.message?.content : data.choices?.[0]?.message?.content;
             setMessages([...newMessages, { role: 'assistant', content: reply || 'Empty response' }]);
         } catch (err: any) {
-            setMessages([...newMessages, { role: 'assistant', content: `Error: ${err.message}` }]);
+            setMessages([...newMessages, { role: 'assistant', content: `❌ Error: ${err.message}` }]);
         } finally {
             setIsTyping(false);
         }
     };
 
+    if (isInitializing) {
+        return (
+            <div className="min-h-screen bg-zinc-950 flex items-center justify-center">
+                <div className="flex flex-col items-center gap-4">
+                    <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center animate-pulse">
+                        <Cpu className="text-primary" size={24} />
+                    </div>
+                    <div className="text-muted-foreground text-sm font-medium animate-pulse">Initializing Aether-Key...</div>
+                </div>
+            </div>
+        );
+    }
+
     return (
-        <div className="min-h-screen bg-background">
-            <div className="max-w-3xl mx-auto px-4 py-6 md:py-10 flex flex-col h-screen">
+        <div className="min-h-screen bg-zinc-950 text-zinc-100 selection:bg-primary/30">
+            <div className="max-w-4xl mx-auto px-4 py-8 md:py-12 flex flex-col h-screen">
                 {/* Header */}
-                <header className="flex items-center justify-between pb-4 mb-4 border-b">
-                    <div className="flex items-center gap-3">
-                        <div className="h-9 w-9 rounded-xl bg-primary/10 flex items-center justify-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="text-primary" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <path d="m21 2-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0 3 3L22 7l-3-3m-3.5 3.5L19 4" />
-                            </svg>
+                <header className="flex items-center justify-between pb-6 mb-6 border-b border-zinc-900">
+                    <div className="flex items-center gap-4">
+                        <div className="h-12 w-12 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center shadow-inner">
+                            <Sparkles className="text-blue-400" size={24} />
                         </div>
                         <div>
-                            <h1 className="text-lg font-bold tracking-tight">Aether-Key</h1>
-                            <p className="text-xs text-muted-foreground">Universal BYOK Gateway</p>
+                            <h1 className="text-xl font-black tracking-tight uppercase">
+                                Aether <span className="text-blue-500">Key</span>
+                            </h1>
+                            <div className="flex items-center gap-2 mt-0.5">
+                                <span className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse" />
+                                <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Universal BYOK Gateway</p>
+                            </div>
                         </div>
                     </div>
                     <div className="flex items-center gap-3">
                         <ConnectionStatus />
                         <button
                             onClick={() => setIsOpen(true)}
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-primary text-primary-foreground hover:bg-primary/90 transition-colors shadow-sm"
+                            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold bg-zinc-900 border border-zinc-800 text-zinc-300 hover:bg-zinc-800 hover:text-white transition-all shadow-xl active:scale-95"
                         >
-                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" /><polyline points="10 17 15 12 10 7" /><line x1="15" x2="3" y1="12" y2="12" /></svg>
-                            {isConfigured ? 'Switch' : 'Connect'}
+                            <Zap size={14} className={isConfigured ? "text-blue-400 fill-blue-400" : ""} />
+                            {isConfigured ? 'Change AI' : 'Connect AI'}
                         </button>
                     </div>
                 </header>
 
-                {/* Chat area */}
-                <div className="flex-1 flex flex-col rounded-2xl border border-border overflow-hidden bg-card/50 min-h-0">
-                    {/* Messages */}
-                    <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                        {messages.length === 0 && (
-                            <div className="h-full flex flex-col items-center justify-center text-center px-8">
-                                <div className="h-14 w-14 rounded-2xl bg-muted flex items-center justify-center mb-4">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-muted-foreground">
-                                        <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" />
-                                    </svg>
-                                </div>
-                                <p className="text-sm font-medium text-foreground mb-1">Ready to chat</p>
-                                <p className="text-xs text-muted-foreground max-w-[240px]">
-                                    {isConfigured ? 'Send a message to get started.' : 'Connect your AI provider to begin.'}
-                                </p>
-                            </div>
-                        )}
-                        {messages.map((m, i) => (
-                            <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'} animate-slide-up`}>
-                                {m.role === 'user' ? (
-                                    <div className="max-w-[85%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed bg-primary text-primary-foreground rounded-br-md">
-                                        {m.content}
+                {/* Main Content Area */}
+                <main className="flex-1 flex flex-col gap-6 min-h-0">
+                    {/* Chat Window */}
+                    <div className="flex-1 flex flex-col rounded-3xl border border-zinc-800 bg-zinc-900/30 backdrop-blur-md overflow-hidden shadow-2xl relative">
+                        {/* Messages Scroll Area */}
+                        <div className="flex-1 overflow-y-auto p-6 space-y-6">
+                            {messages.length === 0 ? (
+                                <div className="h-full flex flex-col items-center justify-center text-center px-12 animate-slide-up">
+                                    <div className="h-20 w-20 rounded-[2rem] bg-zinc-900 border border-zinc-800 flex items-center justify-center mb-6 shadow-2xl relative group">
+                                        <div className="absolute inset-0 bg-blue-500/5 blur-2xl group-hover:bg-blue-500/10 transition-all" />
+                                        <MessageSquare size={32} className="text-zinc-600 relative" strokeWidth={1.5} />
                                     </div>
-                                ) : (
-                                    <div className="max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed bg-muted text-foreground rounded-bl-md">
-                                        <ReactMarkdown
-                                            components={{
-                                                p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
-                                                code: ({ children, className }) => {
-                                                    const isInline = !className;
-                                                    if (isInline) {
-                                                        return <code className="px-1.5 py-0.5 rounded bg-background/60 text-[13px] font-mono">{children}</code>;
-                                                    }
-                                                    return (
-                                                        <pre className="mt-2 mb-2 p-3 rounded-lg bg-background/80 overflow-x-auto border">
-                                                            <code className="text-[13px] font-mono">{children}</code>
-                                                        </pre>
-                                                    );
-                                                },
-                                                ul: ({ children }) => <ul className="list-disc pl-4 mb-2 space-y-0.5">{children}</ul>,
-                                                ol: ({ children }) => <ol className="list-decimal pl-4 mb-2 space-y-0.5">{children}</ol>,
-                                                li: ({ children }) => <li className="text-sm">{children}</li>,
-                                                h1: ({ children }) => <h1 className="text-base font-bold mb-2 mt-1">{children}</h1>,
-                                                h2: ({ children }) => <h2 className="text-sm font-bold mb-2 mt-1">{children}</h2>,
-                                                h3: ({ children }) => <h3 className="text-sm font-semibold mb-1 mt-1">{children}</h3>,
-                                                strong: ({ children }) => <strong className="font-semibold">{children}</strong>,
-                                                em: ({ children }) => <em className="italic">{children}</em>,
-                                                blockquote: ({ children }) => (
-                                                    <blockquote className="border-l-2 border-muted-foreground/30 pl-3 my-2 italic text-muted-foreground">{children}</blockquote>
-                                                ),
-                                                a: ({ children, href }) => (
-                                                    <a href={href} target="_blank" rel="noopener noreferrer" className="text-primary underline underline-offset-2 hover:text-primary/80">{children}</a>
-                                                ),
-                                            }}
-                                        >
-                                            {m.content}
-                                        </ReactMarkdown>
-                                    </div>
-                                )}
-                            </div>
-                        ))}
-                        {isTyping && (
-                            <div className="flex justify-start animate-slide-up">
-                                <div className="bg-muted text-muted-foreground rounded-2xl rounded-bl-md px-4 py-3">
-                                    <div className="flex gap-1">
-                                        <span className="h-1.5 w-1.5 rounded-full bg-muted-foreground/40 animate-bounce" style={{ animationDelay: '0ms' }} />
-                                        <span className="h-1.5 w-1.5 rounded-full bg-muted-foreground/40 animate-bounce" style={{ animationDelay: '150ms' }} />
-                                        <span className="h-1.5 w-1.5 rounded-full bg-muted-foreground/40 animate-bounce" style={{ animationDelay: '300ms' }} />
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-                        <div ref={messagesEndRef} />
-                    </div>
+                                    <h3 className="text-lg font-bold text-white mb-2">Secure Local & Cloud Chat</h3>
+                                    <p className="text-sm text-zinc-500 max-w-sm leading-relaxed">
+                                        {isConfigured
+                                            ? `You're connected to ${provider}:${model}. Send a message to start an encrypted inference session.`
+                                            : 'Bring your own keys or use local Ollama. Encryption happens entirely in your browser.'}
+                                    </p>
 
-                    {/* Input */}
-                    <div className="p-3 border-t bg-background/80 backdrop-blur-sm">
-                        <form onSubmit={handleSend} className="flex gap-2">
-                            <input
-                                type="text"
-                                value={input}
-                                onChange={e => setInput(e.target.value)}
-                                disabled={!isConfigured || isTyping}
-                                placeholder={isConfigured ? 'Type a message...' : 'Connect your AI first'}
-                                className="flex-1 px-4 py-2.5 text-sm border rounded-xl bg-background focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all placeholder:text-muted-foreground/50 disabled:opacity-50"
-                            />
-                            <button
-                                type="submit"
-                                disabled={!isConfigured || isTyping || !input.trim()}
-                                className="bg-primary text-primary-foreground px-4 py-2.5 rounded-xl font-medium text-sm hover:bg-primary/90 disabled:opacity-40 transition-all active:scale-95"
-                            >
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="22" x2="11" y1="2" y2="13" /><polygon points="22 2 15 22 11 13 2 9 22 2" /></svg>
-                            </button>
-                        </form>
+                                    <div className="grid grid-cols-2 gap-3 mt-10 w-full max-w-md">
+                                        <div className="p-4 rounded-2xl bg-zinc-900/50 border border-zinc-800 text-left">
+                                            <ShieldCheck size={18} className="text-blue-400 mb-2" />
+                                            <p className="text-xs font-bold text-white mb-1 uppercase tracking-tight">Zero Knowledge</p>
+                                            <p className="text-[10px] text-zinc-500 leading-tight">Keys are AES-256 encrypted client-side.</p>
+                                        </div>
+                                        <div className="p-4 rounded-2xl bg-zinc-900/50 border border-zinc-800 text-left">
+                                            <Zap size={18} className="text-amber-400 mb-2" />
+                                            <p className="text-xs font-bold text-white mb-1 uppercase tracking-tight">Unified API</p>
+                                            <p className="text-[10px] text-zinc-500 leading-tight">Switch between 40+ providers instantly.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            ) : (
+                                messages.map((m, i) => (
+                                    <div key={i} className={`flex gap-4 ${m.role === 'user' ? 'justify-end' : 'justify-start'} animate-slide-up`}>
+                                        {m.role === 'assistant' && (
+                                            <div className="shrink-0 h-8 w-8 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center mt-1">
+                                                <Cpu size={16} className="text-blue-400" />
+                                            </div>
+                                        )}
+                                        <div className={`max-w-[85%] rounded-[1.25rem] px-5 py-3 text-sm leading-relaxed shadow-lg ${m.role === 'user'
+                                                ? 'bg-blue-600 text-white rounded-tr-sm border border-blue-500'
+                                                : 'bg-zinc-800/80 text-zinc-100 rounded-tl-sm border border-zinc-700/50'
+                                            }`}>
+                                            <div className="prose prose-invert prose-dark max-w-none">
+                                                <ReactMarkdown remarkPlugins={[remarkGfm]}>{m.content}</ReactMarkdown>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))
+                            )}
+                            {isTyping && (
+                                <div className="flex justify-start gap-4 animate-slide-up">
+                                    <div className="shrink-0 h-8 w-8 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center mt-1">
+                                        <Cpu size={16} className="text-blue-400" />
+                                    </div>
+                                    <div className="bg-zinc-800/80 rounded-2xl rounded-tl-sm px-5 py-4 border border-zinc-700/50 shadow-lg">
+                                        <div className="flex gap-1.5">
+                                            <span className="h-1.5 w-1.5 rounded-full bg-blue-400 animate-bounce" style={{ animationDelay: '0ms' }} />
+                                            <span className="h-1.5 w-1.5 rounded-full bg-blue-400 animate-bounce" style={{ animationDelay: '150ms' }} />
+                                            <span className="h-1.5 w-1.5 rounded-full bg-blue-400 animate-bounce" style={{ animationDelay: '300ms' }} />
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                            <div ref={messagesEndRef} />
+                        </div>
+
+                        {/* Input Box */}
+                        <div className="p-4 border-t border-zinc-800 bg-zinc-950/50">
+                            <form onSubmit={handleSend} className="relative group flex items-end gap-3 bg-zinc-900 border border-zinc-800 rounded-2xl p-2 transition-all focus-within:border-blue-500/50 focus-within:shadow-[0_0_0_4px_rgba(59,130,246,0.05)]">
+                                <textarea
+                                    value={input}
+                                    onChange={e => setInput(e.target.value)}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter' && !e.shiftKey) {
+                                            e.preventDefault();
+                                            handleSend(e);
+                                        }
+                                    }}
+                                    disabled={!isConfigured || isTyping}
+                                    placeholder={isConfigured ? `Ask ${model?.split('/').pop()} anything...` : 'Connect your AI to start chatting'}
+                                    rows={1}
+                                    className="flex-1 bg-transparent border-none focus:ring-0 text-sm px-3 py-2.5 resize-none min-h-[44px] max-h-40 overflow-y-auto disabled:opacity-50 placeholder:text-zinc-600"
+                                />
+                                <button
+                                    type="submit"
+                                    disabled={!isConfigured || isTyping || !input.trim()}
+                                    className="h-10 w-10 flex items-center justify-center rounded-xl bg-blue-600 text-white hover:bg-blue-500 disabled:bg-zinc-800 disabled:text-zinc-600 transition-all shrink-0 active:scale-90 shadow-lg"
+                                >
+                                    <Send size={18} />
+                                </button>
+                            </form>
+                            <div className="flex justify-between items-center mt-3 px-2">
+                                <p className="text-[10px] uppercase font-bold tracking-widest text-zinc-600">
+                                    {isConfigured ? `${provider} · ${model}` : 'Not Connected'}
+                                </p>
+                                <button
+                                    type="button"
+                                    onClick={() => setMessages([])}
+                                    className="text-[10px] uppercase font-bold tracking-widest text-zinc-600 hover:text-red-400 transition-colors flex items-center gap-1"
+                                >
+                                    <Trash2 size={10} /> Clear Chat
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                </div>
+                </main>
+
+                <footer className="mt-8 text-center animate-fade-in">
+                    <p className="text-[10px] text-zinc-600 font-medium">
+                        Keys are never stored on any server &bull; Transient inference via Aether-Key Proxy
+                    </p>
+                </footer>
             </div>
 
             <AetherKeyModal isOpen={isOpen} onClose={() => setIsOpen(false)} />
@@ -196,4 +224,4 @@ function Chat() {
     );
 }
 
-export default Chat;
+export default App;

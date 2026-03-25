@@ -3,7 +3,7 @@ export default {
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
-    "../../packages/react/src/**/*.{js,ts,jsx,tsx}", // Include library components!
+    "../../packages/react/src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     extend: {

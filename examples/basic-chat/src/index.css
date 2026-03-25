@@ -4,26 +4,26 @@
 
 @layer base {
     :root {
-        --background: 0 0% 100%;
-        --foreground: 222.2 84% 4.9%;
-        --card: 0 0% 100%;
-        --card-foreground: 222.2 84% 4.9%;
-        --popover: 0 0% 100%;
-        --popover-foreground: 222.2 84% 4.9%;
-        --primary: 221.2 83.2% 53.3%;
-        --primary-foreground: 210 40% 98%;
-        --secondary: 210 40% 96.1%;
-        --secondary-foreground: 222.2 47.4% 11.2%;
-        --muted: 210 40% 96.1%;
-        --muted-foreground: 215.4 16.3% 46.9%;
-        --accent: 210 40% 96.1%;
-        --accent-foreground: 222.2 47.4% 11.2%;
-        --destructive: 0 84.2% 60.2%;
-        --destructive-foreground: 210 40% 98%;
-        --border: 214.3 31.8% 91.4%;
-        --input: 214.3 31.8% 91.4%;
-        --ring: 221.2 83.2% 53.3%;
-        --radius: 0.5rem;
+        --background: 240 10% 3.9%;
+        --foreground: 0 0% 98%;
+        --card: 240 10% 3.9%;
+        --card-foreground: 0 0% 98%;
+        --popover: 240 10% 3.9%;
+        --popover-foreground: 0 0% 98%;
+        --primary: 217.2 91.2% 59.8%;
+        --primary-foreground: 222.2 47.4% 11.2%;
+        --secondary: 240 3.7% 15.9%;
+        --secondary-foreground: 0 0% 98%;
+        --muted: 240 3.7% 15.9%;
+        --muted-foreground: 240 5% 64.9%;
+        --accent: 240 3.7% 15.9%;
+        --accent-foreground: 0 0% 98%;
+        --destructive: 0 62.8% 30.6%;
+        --destructive-foreground: 0 0% 98%;
+        --border: 240 3.7% 15.9%;
+        --input: 240 3.7% 15.9%;
+        --ring: 240 4.9% 83.9%;
+        --radius: 1rem;
     }
 }
 
@@ -33,6 +33,86 @@
     }
 
     body {
-        @apply bg-background text-foreground;
+        @apply bg-zinc-950 text-foreground antialiased;
+        font-family: 'Inter', system-ui, sans-serif;
     }
+}
+
+/* ── Custom Animations ── */
+@keyframes slide-up {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes scale-in {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.animate-slide-up {
+    animation: slide-up 0.3s ease-out forwards;
+}
+
+.animate-scale-in {
+    animation: scale-in 0.2s ease-out forwards;
+}
+
+.ak-spinner {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ── Custom Scrollbar ── */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    @apply bg-transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    @apply bg-zinc-800 rounded-full hover:bg-zinc-700 transition-colors;
+}
+
+/* ── Markdown Styles ── */
+.prose-dark {
+    --tw-prose-body: theme('colors.zinc.200');
+    --tw-prose-headings: theme('colors.zinc.50');
+    --tw-prose-links: theme('colors.blue.400');
+    --tw-prose-bold: theme('colors.zinc.50');
+    --tw-prose-counters: theme('colors.zinc.400');
+    --tw-prose-bullets: theme('colors.zinc.600');
+    --tw-prose-hr: theme('colors.zinc.800');
+    --tw-prose-quotes: theme('colors.zinc.100');
+    --tw-prose-quote-borders: theme('colors.zinc.700');
+    --tw-prose-captions: theme('colors.zinc.400');
+    --tw-prose-code: theme('colors.blue.300');
+    --tw-prose-pre-code: theme('colors.zinc.200');
+    --tw-prose-pre-bg: theme('colors.zinc.900');
+    --tw-prose-th-borders: theme('colors.zinc.700');
+    --tw-prose-td-borders: theme('colors.zinc.800');
 }
