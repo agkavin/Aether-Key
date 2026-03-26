@@ -167,6 +167,33 @@ A standalone, high-performance streaming chat interface designed specifically fo
 
 ---
 
+## Troubleshooting
+
+### Local Ollama connection failing? (CORS Error)
+By default, the Ollama desktop app blocks cross-origin requests from web browsers for security reasons. If you or your users are running Ollama locally but getting a connection error in the app, you need to allow CORS.
+
+**For Mac Users:**
+1. **Quit the Ollama App** (Click the llama icon in your top right menu bar and select "Quit Ollama").
+2. Open your **Terminal** app.
+3. Run the following command:
+   ```bash
+   launchctl setenv OLLAMA_ORIGINS "*"
+   ```
+4. **Restart** the Ollama desktop app from your Applications folder.
+
+*Alternative method for Mac/Linux terminal:*
+```bash
+OLLAMA_ORIGINS="*" ollama serve
+```
+
+**For Windows Users:**
+1. Right-click the **Ollama** icon in your system tray and select "Quit".
+2. Open **Command Prompt** (cmd) or PowerShell.
+3. Run: `setx OLLAMA_ORIGINS "*"`
+4. **Restart** the Ollama process.
+
+---
+
 ## License
 
 MIT
