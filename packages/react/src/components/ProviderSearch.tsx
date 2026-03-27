@@ -51,10 +51,10 @@ export function ProviderSearch({ proxyBaseUrl }: ProviderSearchProps) {
     }
 
     return (
-        <div className="space-y-3">
+        <div className="space-y-5">
             {/* Provider Select */}
             <div>
-                <label className="block text-xs font-semibold mb-2 text-muted-foreground uppercase tracking-wider">
+                <label className="block text-xs font-semibold mb-3 text-muted-foreground uppercase tracking-wider">
                     Provider
                 </label>
                 <div className="relative">
@@ -70,7 +70,7 @@ export function ProviderSearch({ proxyBaseUrl }: ProviderSearchProps) {
                     </button>
 
                     {providerOpen && (
-                        <div className="absolute z-10 left-0 right-0 mt-1 bg-card border rounded-xl shadow-lg overflow-hidden animate-scale-in">
+                        <div className="relative mt-2 mb-4 bg-muted/20 border-2 rounded-xl overflow-hidden animate-scale-in">
                             <div className="p-2 border-b">
                                 <input
                                     type="text"
@@ -81,7 +81,7 @@ export function ProviderSearch({ proxyBaseUrl }: ProviderSearchProps) {
                                     onChange={(e) => setProviderSearch(e.target.value)}
                                 />
                             </div>
-                            <div className="max-h-[180px] overflow-y-auto p-1">
+                            <div className="max-h-[160px] overflow-y-auto p-1">
                                 {filteredProviders.map(p => (
                                     <button
                                         key={p.id}
@@ -118,8 +118,8 @@ export function ProviderSearch({ proxyBaseUrl }: ProviderSearchProps) {
 
             {/* Model Select — only show after provider is selected */}
             {selectedProvider && (
-                <div className="animate-slide-up pt-2">
-                    <label className="block text-xs font-semibold mb-2 text-muted-foreground uppercase tracking-wider">
+                <div className="animate-slide-up pt-4">
+                    <label className="block text-xs font-semibold mb-3 text-muted-foreground uppercase tracking-wider">
                         Model
                     </label>
                     <div className="relative">
@@ -135,7 +135,7 @@ export function ProviderSearch({ proxyBaseUrl }: ProviderSearchProps) {
                         </button>
 
                         {modelOpen && (
-                            <div className="absolute z-10 left-0 right-0 mt-1 bg-card border rounded-xl shadow-lg overflow-hidden animate-scale-in">
+                            <div className="relative mt-2 mb-4 bg-muted/20 border-2 rounded-xl overflow-hidden animate-scale-in">
                                 <div className="p-2 border-b">
                                     <input
                                         type="text"

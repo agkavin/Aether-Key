@@ -42,7 +42,7 @@ export function AetherKeyModal({ isOpen, onClose }: AetherKeyModalProps) {
                 onClick={onClose}
             />
 
-            <div className="relative bg-card w-full max-w-lg rounded-2xl shadow-2xl border border-border overflow-hidden flex flex-col animate-scale-in">
+            <div className="relative bg-card w-full max-w-lg max-h-[90vh] rounded-2xl shadow-2xl border border-border overflow-hidden flex flex-col animate-scale-in">
                 {/* Header */}
                 <div className="p-6 pb-4 flex items-center justify-between">
                     <div className="flex items-center gap-4">
@@ -66,7 +66,7 @@ export function AetherKeyModal({ isOpen, onClose }: AetherKeyModalProps) {
                 </div>
 
                 {/* Content — scrollable */}
-                <div className="px-6 pb-6 overflow-y-auto space-y-6">
+                <div className="px-6 pb-24 flex-1 overflow-y-auto space-y-8">
                     <OllamaScanner />
 
                     <div className="relative py-2">
